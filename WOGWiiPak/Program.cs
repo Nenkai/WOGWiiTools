@@ -69,7 +69,9 @@ namespace WOGWiiPak
             {
                 var path = tx.ReadLine();
                 uint hash = this.Hash(path);
-                Paths.Add(hash, path);
+
+                if (!Paths.TryGetValue(hash, out _))
+                    Paths.Add(hash, path);
             }
             tx.Dispose();
 
