@@ -1,3 +1,4 @@
+resident.pak
 properties\config.txt
 properties\fx.xml
 properties\materials.xml
@@ -3813,6 +3814,8 @@ res\movie\Chapter2End\head.en.png.binbig
 res\movie\Chapter2End\head.png.binbig
 res\movie\Chapter2End\lf.en.png.binbig
 res\movie\Chapter2End\lf.png.binbig
+res\movie\Chapter2End\lightson.en.ogg.binbig
+res\movie\Chapter2End\lightson.ogg.binbig
 res\movie\Chapter2Mid\bg.en.png.binbig
 res\movie\Chapter2Mid\bg.png.binbig
 res\movie\Chapter2Mid\c2midSfx.en.en.ogg.binbig
