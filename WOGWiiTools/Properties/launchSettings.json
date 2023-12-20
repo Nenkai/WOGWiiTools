@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WOGWiiPak": {
+      "commandName": "Project",
+      "commandLineArgs": "image-to-png -i C:\\Users\\nenkai\\source\\repos\\WOGWiiPak\\WOGWiiPak\\bin\\Debug\\net6.0\\jp_output\\res\\levels\\ThirdWheel"
+    }
+  }
+}

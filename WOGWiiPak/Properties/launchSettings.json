@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "WOGWiiPak": {
-      "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\nenkai\\Desktop\\wad\\New folder\\World of Goo (USA) (WiiWare)\\00000002_app_OUT\\master.pak\" \"output\""
-    }
-  }
-}

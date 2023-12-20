@@ -1,4 +1,4 @@
-# WOGWiiPak
+# WOGWiiTools
 
 Extracts files from World Of Goo (Wii) .pak packages, normally master.pak.
 

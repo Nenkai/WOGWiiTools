@@ -1,46 +1,14 @@
-﻿using Syroot.BinaryData;
+﻿using AuroraLib.Compression.Algorithms;
+using Syroot.BinaryData;
 
-using AuroraLib.Compression;
-using AuroraLib.Compression.Algorithms;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace WOGWiiPak
+namespace WOGWiiTools.Formats.Pak
 {
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("-----------------------------------------");
-            Console.WriteLine("- WOGWiiPak by Nenkai");
-            Console.WriteLine("-----------------------------------------");
-            Console.WriteLine("- https://github.com/Nenkai");
-            Console.WriteLine("-----------------------------------------");
-            Console.WriteLine("");
-
-            if (args.Length != 2)
-            {
-                Console.WriteLine("Usage: <input pak file> <output dir>");
-                return;
-            }
-
-            if (!File.Exists(args[0]))
-            {
-                Console.WriteLine("ERROR: Input pak file does not exist");
-                return;
-            }
-
-            if (File.Exists(args[1]))
-            {
-                Console.WriteLine("ERROR: Invalid output directory - is a file");
-                return;
-            }
-
-            using var fs = new FileStream(args[0], FileMode.Open);
-            using var pak = new Pak(fs);
-            pak.Load();
-            pak.ExtractAll(args[1]);
-        }
-    }
-
     public class Pak : IDisposable
     {
         private Stream _stream;
@@ -154,28 +122,6 @@ namespace WOGWiiPak
             }
 
             return value;
-        }
-    }
-
-    public class PakEntry
-    {
-        public string Path { get; set; }
-        public uint Hash { get; set; }
-        public uint FileOffset { get; set; }
-        public uint FileSize { get; set; }
-        public uint Meta { get; set; }
-
-        public void Read(BinaryStream bs)
-        {
-            Hash = bs.ReadUInt32();
-            FileOffset = bs.ReadUInt32();
-            FileSize = bs.ReadUInt32();
-            Meta = bs.ReadUInt32();
-        }
-
-        public override string ToString()
-        {
-            return $"'{(string.IsNullOrEmpty(Path) ? "Unk" : Path)}' (0x{Hash:X8}) Offset:0x{FileOffset} Size: 0x{FileSize:X8}";
         }
     }
 }
