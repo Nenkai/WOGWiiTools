@@ -54,6 +54,7 @@ namespace WOGWiiTools.Formats
             using var output = new MemoryStream();
             var lz11 = new LZ11();
             lz11.Decompress(stream, output);
+            output.Flush();
 
             // Begin to read header
             output.Position = 0;
@@ -83,50 +84,60 @@ namespace WOGWiiTools.Formats
             Data = bs.ReadBytes((int)(padWidth * padHeight * numChannels));
         }
 
-        public void ConvertToPng(string path)
+        public void ConvertToPng(string path, bool arrange = false)
         {
             var img = new Image<Rgba32>((int)padWidth, (int)padHeight);
             byte[,] channelBuffer = new byte[padWidth, padHeight];
 
-            // Data is arranged to be more friendly to compression algos, de-arrange it
             // Massive credits to Allan Blomquist for explaining the process
             for (int channelIndex = 0; channelIndex < 4; channelIndex++)
             {
                 int channel = channelMap[channelIndex];
 
-                int oldLeft = 127;
-                int oldUp = 127;
-                int oldDiag = 127;
+                byte oldLeft = 127;
+                byte oldUp = 127;
+                byte oldDiag = 127;
 
                 for (int y = 0; y < totalHeight; y++)
                 {
                     for (int x = 0; x < totalWidth; x++)
                     {
-                        if (x > 0)
-                            oldLeft = channelBuffer[x - 1, y];
-                        else if (y > 0)
-                            oldLeft = channelBuffer[x, y - 1];
-
-                        if (y > 0)
-                            oldUp = channelBuffer[x, y - 1];
-                        else if (x > 0)
-                            oldUp = channelBuffer[x - 1, y];
-
-                        if (x > 0 && y > 0)
-                            oldDiag = channelBuffer[x - 1, y - 1];
-                        else if (y > 0)
-                            oldDiag = channelBuffer[x, y - 1];
-                        else if (x > 0)
-                            oldDiag = channelBuffer[x - 1, y];
-
-                        int vertDiff = oldLeft - oldDiag;
-                        int horzDiff = oldUp - oldDiag;
-
                         byte color;
-                        if (Math.Abs(vertDiff) < Math.Abs(horzDiff))
-                            color = (byte)(oldUp + GetChannelTexelColor(channel, x, y));
+                        if (arrange)
+                        {
+                            // In JP which was released later on (at least), data is arranged to be more friendly to compression algos, de-arrange it
+                            // Likely was used to shave some bytes by making the data more friendly for LZ11 to compress - JP inherently uses more assets
+                            // Smart stuff
+                            
+                            if (x > 0)
+                                oldLeft = channelBuffer[x - 1, y];
+                            else if (y > 0)
+                                oldLeft = channelBuffer[x, y - 1];
+
+                            if (y > 0)
+                                oldUp = channelBuffer[x, y - 1];
+                            else if (x > 0)
+                                oldUp = channelBuffer[x - 1, y];
+
+                            if (x > 0 && y > 0)
+                                oldDiag = channelBuffer[x - 1, y - 1];
+                            else if (y > 0)
+                                oldDiag = channelBuffer[x, y - 1];
+                            else if (x > 0)
+                                oldDiag = channelBuffer[x - 1, y];
+
+                            int vertDiff = oldLeft - oldDiag;
+                            int horzDiff = oldUp - oldDiag;
+
+                            if (Math.Abs(vertDiff) < Math.Abs(horzDiff))
+                                color = (byte)(oldUp + GetChannelTexelColor(channel, x, y));
+                            else
+                                color = (byte)(oldLeft + GetChannelTexelColor(channel, x, y));
+                        }
                         else
-                            color = (byte)(oldLeft + GetChannelTexelColor(channel, x, y));
+                        {
+                            color = GetChannelTexelColor(channel, x, y);
+                        }
 
                         channelBuffer[x, y] = color;
 

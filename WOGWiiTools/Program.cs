@@ -46,11 +46,11 @@ namespace WOGWiiTools
         {
             if (verbs.InputPaths.Count() == 1 && Directory.Exists(verbs.InputPaths.First()))
             {
-                foreach (var file in Directory.GetFiles(verbs.InputPaths.First()))
+                foreach (var file in Directory.GetFiles(verbs.InputPaths.First(), "*", verbs.Recursive ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories))
                 {
                     try
                     {
-                        ProcessImage(file);
+                        ProcessImage(file, verbs.Arrange);
                     }
                     catch (Exception e)
                     {
@@ -64,7 +64,7 @@ namespace WOGWiiTools
                 {
                     try
                     {
-                        ProcessImage(file);
+                        ProcessImage(file, verbs.Arrange);
                     }
                     catch (Exception e)
                     {
@@ -74,7 +74,7 @@ namespace WOGWiiTools
             }
         }
 
-        private static void ProcessImage(string file)
+        private static void ProcessImage(string file, bool arrange)
         {
             using var fss = new FileStream(file, FileMode.Open);
             Console.WriteLine($"Processing: {file}");
@@ -93,7 +93,7 @@ namespace WOGWiiTools
                 else
                     output = Path.ChangeExtension(file, ".png");
 
-                image.ConvertToPng(output);
+                image.ConvertToPng(output, arrange);
                 Console.WriteLine($"Converted to {output}");
             }
             catch (Exception e)
@@ -118,5 +118,12 @@ namespace WOGWiiTools
     {
         [Option('i', "input", Required = true, HelpText = "Input file.")]
         public IEnumerable<string> InputPaths { get; set; }
+
+        [Option('a', "arrange", HelpText = "USE THIS if you are converting from JP game versions (or newer). Later releases uses a special pixel arrangement.")]
+        public bool Arrange { get; set; }
+
+        [Option('r', "recursive", HelpText = "If a folder is provided, whether to recursively convert.")]
+        public bool Recursive { get; set; }
+
     }
 }
